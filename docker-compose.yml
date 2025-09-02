@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: .
+    ports:
+      - "3000:80"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - backend
+
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGODB_URL=${MONGODB_URL}
+      - MONGODB_DB_NAME=${MONGODB_DB_NAME}
+      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID}
+      - FIREBASE_PRIVATE_KEY_ID=${FIREBASE_PRIVATE_KEY_ID}
+      - FIREBASE_PRIVATE_KEY=${FIREBASE_PRIVATE_KEY}
+      - FIREBASE_CLIENT_EMAIL=${FIREBASE_CLIENT_EMAIL}
+      - FIREBASE_CLIENT_ID=${FIREBASE_CLIENT_ID}
+      - PINECONE_API_KEY=${PINECONE_API_KEY}
+      - PINECONE_ENVIRONMENT=${PINECONE_ENVIRONMENT}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    volumes:
+      - ./backend/uploads:/app/uploads
+
+  # MongoDB for local development (optional)
+  mongodb:
+    image: mongo:6
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=panda
+    volumes:
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
